@@ -14,8 +14,8 @@ export function middleware(request) {
     }
   }
 
-  // Protect /api/admin routes
-  if (pathname.startsWith('/api/admin')) {
+  // Protect /api/admin routes (but not /api/admin/login itself)
+  if (pathname.startsWith('/api/admin') && !pathname.startsWith('/api/admin/login')) {
     const session = request.cookies.get(COOKIE_NAME);
     if (!session || session.value !== signedToken()) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
