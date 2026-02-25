@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Beisser Lumber — Garage Estimator</title>
+<style>
+  /* ── TOKENS ── */
+  :root {
+    --red:      #C8181E;
+    --red-dk:   #9E1015;
+    --red-lt:   #f5e6e7;
+    --gray-0:   #ffffff;
+    --gray-1:   #f7f7f7;
+    --gray-2:   #ebebeb;
+    --gray-3:   #d0d0d0;
+    --gray-5:   #888;
+    --gray-7:   #444;
+    --gray-9:   #111;
+    --ink:      #1a1a1a;
+    --radius:   4px;
+    --shadow:   0 1px 3px rgba(0,0,0,.1), 0 4px 12px rgba(0,0,0,.06);
+    --font-head: 'Georgia', 'Times New Roman', serif;
+    --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+font-family: var(–font-body);
+background: var(–gray-1);
+color: var(–ink);
+min-height: 100vh;
+font-size: 14px;
+line-height: 1.5;
+}
+
+/* ── HEADER ── */
+header {
+background: var(–red);
+color: #fff;
+padding: 0 24px;
+display: flex;
+align-items: center;
+gap: 16px;
+height: 56px;
+position: sticky;
+top: 0;
+z-index: 100;
+box-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
+.logo {
+font-family: var(–font-head);
+font-size: 18px;
+font-weight: 400;
+letter-spacing: .02em;
+flex: 1;
+}
+.logo span { font-weight: 700; }
+header .badge {
+font-size: 11px;
+font-weight: 600;
+letter-spacing: .08em;
+text-transform: uppercase;
+background: rgba(255,255,255,.18);
+padding: 3px 9px;
+border-radius: 20px;
+border: 1px solid rgba(255,255,255,.3);
+}
+
+/* ── LAYOUT ── */
+.page { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+
+.two-col {
+display: grid;
+grid-template-columns: 340px 1fr;
+gap: 24px;
+align-items: start;
+}
+
+@media (max-width: 860px) {
+.two-col { grid-template-columns: 1fr; }
+}
+
+/* ── CARDS ── */
+.card {
+background: var(–gray-0);
+border-radius: 6px;
+border: 1px solid var(–gray-2);
+box-shadow: var(–shadow);
+overflow: hidden;
+}
+.card-head {
+padding: 12px 18px;
+border-bottom: 1px solid var(–gray-2);
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 12px;
+}
+.card-head h2 {
+font-family: var(–font-head);
+font-size: 15px;
+font-weight: 400;
+color: var(–gray-9);
+}
+.card-body { padding: 18px; }
+
+/* ── FORM ── */
+.section-label {
+font-size: 10px;
+font-weight: 700;
+letter-spacing: .1em;
+text-transform: uppercase;
+color: var(–red);
+margin: 18px 0 10px;
+padding-bottom: 6px;
+border-bottom: 1px solid var(–red-lt);
+}
+.section-label:first-child { margin-top: 0; }
+
+.field { margin-bottom: 12px; }
+label {
+display: block;
+font-size: 12px;
+font-weight: 600;
+color: var(–gray-7);
+margin-bottom: 4px;
+}
+input[type=“text”], input[type=“number”], select {
+width: 100%;
+height: 34px;
+padding: 0 10px;
+border: 1px solid var(–gray-3);
+border-radius: var(–radius);
+font-family: var(–font-body);
+font-size: 13px;
+color: var(–ink);
+background: var(–gray-0);
+transition: border-color .15s;
+appearance: none;
+}
+select {
+background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘10’ height=‘6’%3E%3Cpath d=‘M0 0l5 6 5-6z’ fill=’%23888’/%3E%3C/svg%3E”);
+background-repeat: no-repeat;
+background-position: right 10px center;
+padding-right: 28px;
+}
+input:focus, select:focus {
+outline: none;
+border-color: var(–red);
+box-shadow: 0 0 0 3px rgba(200,24,30,.1);
+}
+input[type=“checkbox”] { width: 15px; height: 15px; accent-color: var(–red); }
+.check-row {
+display: flex;
+align-items: center;
+gap: 8px;
+margin-bottom: 12px;
+}
+.check-row label { margin: 0; font-weight: 500; cursor: pointer; }
+
+.field-row {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+}
+
+/* ── BUTTONS ── */
+.btn {
+display: inline-flex;
+align-items: center;
+gap: 7px;
+height: 36px;
+padding: 0 16px;
+border-radius: var(–radius);
+font-family: var(–font-body);
+font-size: 13px;
+font-weight: 600;
+cursor: pointer;
+transition: all .15s;
+border: none;
+white-space: nowrap;
+}
+.btn-primary {
+background: var(–red);
+color: #fff;
+width: 100%;
+justify-content: center;
+height: 40px;
+margin-top: 6px;
+font-size: 14px;
+letter-spacing: .02em;
+}
+.btn-primary:hover { background: var(–red-dk); }
+.btn-export {
+background: var(–gray-9);
+color: #fff;
+}
+.btn-export:hover { background: #333; }
+.btn-export:disabled {
+background: var(–gray-3);
+color: var(–gray-5);
+cursor: not-allowed;
+}
+.btn-clear {
+background: var(–gray-2);
+color: var(–gray-7);
+border: 1px solid var(–gray-3);
+}
+.btn-clear:hover { background: var(–gray-3); }
+
+/* ── ERRORS ── */
+#errors {
+background: #fff0f0;
+border: 1px solid #f5b8b8;
+border-radius: var(–radius);
+padding: 10px 14px;
+margin-top: 10px;
+display: none;
+}
+#errors p {
+font-size: 12px;
+color: var(–red-dk);
+font-weight: 600;
+margin-bottom: 4px;
+}
+#errors ul { padding-left: 16px; }
+#errors li { font-size: 12px; color: var(–red-dk); }
+
+/* ── RESULTS PANEL ── */
+#results-wrap { display: none; }
+
+.results-header {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+gap: 12px;
+flex-wrap: wrap;
+margin-bottom: 16px;
+}
+.results-meta h3 {
+font-family: var(–font-head);
+font-size: 17px;
+font-weight: 400;
+}
+.results-meta p { font-size: 12px; color: var(–gray-5); margin-top: 2px; }
+
+.results-actions { display: flex; gap: 8px; }
+
+/* ── GEOMETRY PILLS ── */
+.geo-bar {
+display: flex;
+flex-wrap: wrap;
+gap: 8px;
+margin-bottom: 18px;
+}
+.geo-pill {
+background: var(–gray-1);
+border: 1px solid var(–gray-2);
+border-radius: 20px;
+padding: 4px 12px;
+font-size: 12px;
+color: var(–gray-7);
+}
+.geo-pill strong { color: var(–gray-9); }
+
+/* ── TAKEOFF TABLE ── */
+.table-wrap {
+overflow-x: auto;
+border: 1px solid var(–gray-2);
+border-radius: 5px;
+}
+table {
+width: 100%;
+border-collapse: collapse;
+font-size: 13px;
+}
+thead th {
+background: var(–gray-9);
+color: #fff;
+font-weight: 600;
+font-size: 11px;
+letter-spacing: .06em;
+text-transform: uppercase;
+padding: 9px 12px;
+text-align: left;
+white-space: nowrap;
+position: sticky;
+top: 56px;
+}
+thead th.right { text-align: right; }
+
+tbody tr:nth-child(even) { background: var(–gray-1); }
+tbody tr:hover { background: #fef6f6; }
+
+.group-row td {
+background: var(–red);
+color: #fff;
+font-weight: 700;
+font-size: 11px;
+letter-spacing: .08em;
+text-transform: uppercase;
+padding: 5px 12px;
+}
+
+td {
+padding: 7px 12px;
+border-bottom: 1px solid var(–gray-2);
+color: var(–gray-7);
+}
+td.description { color: var(–ink); font-weight: 500; }
+td.code {
+font-family: ‘Courier New’, monospace;
+font-size: 12px;
+color: var(–gray-5);
+}
+td.qty {
+text-align: right;
+font-weight: 700;
+color: var(–ink);
+font-size: 14px;
+font-variant-numeric: tabular-nums;
+}
+td.uom {
+color: var(–gray-5);
+font-size: 12px;
+white-space: nowrap;
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 60px 20px;
+color: var(–gray-5);
+gap: 10px;
+text-align: center;
+}
+.empty-state svg { opacity: .3; }
+.empty-state p { font-size: 14px; }
+.empty-state small { font-size: 12px; }
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="logo"><span>Beisser</span> Lumber — Garage Estimator</div>
+  <div class="badge">Gabled Garages Only</div>
+</header>
+
+<div class="page">
+  <div class="two-col">
+
+```
+<!-- ── FORM ── -->
+<div class="card" id="form-card">
+  <div class="card-head">
+    <h2>Project Details</h2>
+  </div>
+  <div class="card-body">
+    <form id="estimate-form" novalidate>
+
+      <div class="section-label">Job Info</div>
+
+      <div class="field">
+        <label for="jobName">Job Name <span style="font-weight:400;color:var(--gray-5)">(max 20 chars)</span></label>
+        <input type="text" id="jobName" maxlength="20" placeholder="Smith Garage" />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="branch">Branch</label>
+          <select id="branch">
+            <option value="Grimes">Grimes</option>
+            <option value="Coralville">Coralville</option>
+            <option value="Fort_Dodge">Fort Dodge</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="salesAgent">Sales Agent</label>
+          <input type="text" id="salesAgent" placeholder="Your name" />
+        </div>
+      </div>
+
+      <div class="section-label">Dimensions</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="width">Width — Gable End (ft)</label>
+          <input type="number" id="width" min="1" max="34" step="1" placeholder="28" />
+        </div>
+        <div class="field">
+          <label for="length">Length (ft)</label>
+          <input type="number" id="length" min="1" max="50" step="1" placeholder="32" />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="wallThickness">Wall Thickness</label>
+          <select id="wallThickness">
+            <option value="2x4">2x4</option>
+            <option value="2x6">2x6</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="wallHeight">Wall Height (ft)</label>
+          <select id="wallHeight">
+            <option value="8">8'</option>
+            <option value="9">9'</option>
+            <option value="10">10'</option>
+            <option value="12">12'</option>
+            <option value="14">14'</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-label">Roof</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="roofPitch">Roof Pitch</label>
+          <select id="roofPitch">
+            <option value="4/12">4/12</option>
+            <option value="6/12">6/12</option>
+            <option value="8/12">8/12</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="roofOverhangInches">Overhang</label>
+          <select id="roofOverhangInches">
+            <option value="12">12"</option>
+            <option value="16">16"</option>
+            <option value="24">24"</option>
+          </select>
+        </div>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="includeShingles" />
+        <label for="includeShingles">Include shingles in takeoff</label>
+      </div>
+
+      <div class="section-label">Siding</div>
+
+      <div class="field">
+        <label for="sidingType">Siding Type</label>
+        <select id="sidingType">
+          <option value="LP">LP SmartSide</option>
+          <option value="Hardie">James Hardie</option>
+          <option value="Vinyl">Vinyl</option>
+          <option value="N/A">None / N/A</option>
+        </select>
+      </div>
+      <div class="check-row" id="wrapWindowsRow">
+        <input type="checkbox" id="wrapWindows" checked />
+        <label for="wrapWindows">Wrap windows with trim</label>
+      </div>
+
+      <div class="section-label">Doors & Windows</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="overheadDoors"># Overhead Doors</label>
+          <select id="overheadDoors">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="serviceDoors"># Service Doors</label>
+          <select id="serviceDoors">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="windows"># Vinyl Windows</label>
+        <select id="windows">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+      </div>
+
+      <div id="errors"></div>
+
+      <button type="submit" class="btn btn-primary">Calculate Takeoff</button>
+    </form>
+  </div>
+</div>
+
+<!-- ── RESULTS ── -->
+<div>
+  <!-- Empty state -->
+  <div class="card" id="empty-card">
+    <div class="empty-state">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <p>Fill in the project details and click <strong>Calculate Takeoff</strong></p>
+      <small>Gabled garages only · max 34' wide · max 50' long</small>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="results-wrap">
+    <div class="results-header">
+      <div class="results-meta">
+        <h3 id="results-title">Takeoff Results</h3>
+        <p id="results-sub"></p>
+      </div>
+      <div class="results-actions">
+        <button class="btn btn-clear" id="btn-clear">Clear</button>
+        <button class="btn btn-export" id="btn-export">⬇ Export CSV</button>
+      </div>
+    </div>
+
+    <div class="geo-bar" id="geo-bar"></div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>UOM</th>
+              <th>Item Code</th>
+              <th class="right">Qty</th>
+            </tr>
+          </thead>
+          <tbody id="takeoff-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<script type="module">
+
+// ── INLINE CALCULATOR (avoids needing a bundler for GitHub Pages) ──────────
+
+const ROOF_PITCH_DATA = {
+  '4/12': { multiplier: 1.05, slope: 4/12 },
+  '6/12': { multiplier: 1.12, slope: 6/12 },
+  '8/12': { multiplier: 1.20, slope: 8/12 },
+};
+
+const SIDING_DATA = {
+  LP:     { boardLengthLF: 16, sfPerBoard: 9.33, tinShinglesPerBoard: 2, zFlashLFPerPiece: 10, wasteFactor: 1.2 },
+  Hardie: { boardLengthLF: 12, sfPerBoard: 7,    tinShinglesPerBoard: 2, zFlashLFPerPiece: 10, wasteFactor: 1.2 },
+  Vinyl:  { boardLengthLF: 12, sfPerBoard: 8.33, tinShinglesPerBoard: 0, zFlashLFPerPiece: 0,  wasteFactor: 1.05 },
+};
+
+const STUD_CODES = {
+  '2x4': { 8:'0204studfir08', 9:'0204studfir09', 10:'0204studfir10', 12:'0204fir12', 14:'0204fir14' },
+  '2x6': { 8:'0206studfir08', 9:'0206studfir09', 10:'0206studfir10', 12:'0206fir12', 14:'0206fir14' },
+};
+const SILL_SEAL_CODES  = { '2x4': 'sillseal3121450', '2x6': 'sillseal5121450' };
+const TREATED_CODES    = {
+  '2x4': { 12:'0204tre12', 14:'0204tre14', 16:'0204tre16' },
+  '2x6': { 12:'0206tre12', 14:'0206tre14', 16:'0206tre16' },
+};
+const WIND_WASH_CODES  = {
+  '2x4': { 12:'0204ww12', 14:'0204ww14', 16:'0204ww16' },
+  '2x6': { 12:'0206ww12', 14:'0206ww14', 16:'0206ww16' },
+};
+const SIDING_CODES = {
+  LP: {
+    'Lap Siding':'lpsidtxt0816', '12" Soffit':'lpsoftxt1216', '16" Soffit':'lpsoftxt1616',
+    '24" Soffit':'lpsoftxt2416', 'Rake Board':'lpsidtxt1216', '1x6':'lptrimtxt010616',
+    '1x8':'lptrimtxt010816', '5/4x6':'lptrimtxt540616', 'Tin Shingle':'flashtsb611',
+    'Z-Flash':'flashzgalvz110', 'Caulk':'caulkquad461', '10d Nails':'nailgalvbox10d',
+    '16d Nails':'nailgalvbox16d', 'Roofing Nails':'nailroofeg2',
+  },
+  Hardie: {
+    'Lap Siding':'jhsidtxt081412', '12" Soffit':'jhsoftxt16144', '16" Soffit':'jhsoftxt16144',
+    '24" Soffit':'jhsoftxt2496', 'Rake Board':'jhsidtxt1212', '1x6':'jhtrimtx4405',
+    '1x8':'jhtrimtx44075', '5/4x6':'jhtrimtx5405', 'Tin Shingle':'flashtsb611',
+    'Z-Flash':'flashzgalvz110', 'Caulk':'caulkquad461', '10d Nails':'nailgalvbox10d',
+    '16d Nails':'nailgalvbox16d', 'Roofing Nails':'nailroofeg2',
+  },
+  Vinyl: {
+    'Lap Siding':'vinclay1sidmsd4', '12" Soffit':'rollexwht316cv', '16" Soffit':'rollexwht316cv',
+    '24" Soffit':'rollexwht316cv', 'Rake Board':'rollexwht316', 'J-Channel':'vinclayjchan34',
+    'Metal Starter':'vinstarterm212', 'Single Under':'vinclayuss', 'Rollex Start':'rollexwhtrs',
+    'MD Divider':'rollexwhtmd12', 'Steel Nails':'rollexwhtnal114', 'Vinyl Lineal':'ct5natclaylin20',
+    '1x6':'rollexbrzcl2450', '1x8':'rollexwhtsl6', '5/4x6':'vinclayoc',
+    'Caulk':'caulkquad461', '10d Nails':'nailgalvbox10d', '16d Nails':'nailgalvbox16d',
+    'Roofing Nails':'nailroofeg2',
+  },
+};
+
+function tyvekCode(h) { return (h===8||h===9) ? 'tyvhw09150' : 'tyvhw101050'; }
+function roundUp(v) { return Math.ceil(v); }
+function iferror(fn, fb=0) { try { const r=fn(); return isFinite(r)?r:fb; } catch { return fb; } }
+
+function calculateGarage(inputs) {
+  const { wallThickness, wallHeight, width, length, overheadDoors, roofPitch,
+          roofOverhangInches, includeShingles, sidingType, wrapWindows, serviceDoors, windows } = inputs;
+
+  const pd = ROOF_PITCH_DATA[roofPitch];
+  const roofMultiplier = pd.multiplier;
+  const roofSlope      = pd.slope;
+  const overhangFt     = roofOverhangInches / 12;
+  const siding         = SIDING_DATA[sidingType] ?? null;
+  const hasSiding      = !!siding;
+  const isLP           = sidingType==='LP', isHardie=sidingType==='Hardie', isVinyl=sidingType==='Vinyl';
+  const isBoardSiding  = isLP||isHardie;
+
+  const perimeterLF    = (length+width)*2;
+  const soffitLF       = roundUp(((length*2)+2)*1.05);
+  const rakeHalfRise   = roofSlope*(width/2);
+  const rakeHalfRun    = (width/2)+overhangFt;
+  const rakeLF         = Math.sqrt(rakeHalfRise**2+rakeHalfRun**2)*4;
+  const roofSF         = (length+1)*(width+(overhangFt*2))*roofMultiplier;
+  const gableSF        = (width/2)*roofSlope*((width+overhangFt)/2)*2;
+  const wallSheathingSF= (perimeterLF*wallHeight)+gableSF;
+  const roLengthLF     = (serviceDoors*3+windows*4)*2.5;
+  const lvlLF          = overheadDoors*width*2;
+  const windWash2x4Count = roundUp((((roofSF/3000)*1000)+(soffitLF*overhangFt))/14/3);
+  const windWash2x6Count = roundUp((((rakeLF*3*1.05)+(soffitLF*1.05))/14)/3);
+
+  const sillSealRolls       = roundUp((perimeterLF/50)*1.05);
+  const treatedMudsillEach  = roundUp(((perimeterLF*1.2)/14)/3);
+  const studCount           = roundUp(perimeterLF*1.2);
+  const windWashFramingCount= roundUp(((perimeterLF*3)/14)/3);
+  const headers2x12         = roundUp(roLengthLF/12);
+  const wallSheathingOSB    = iferror(()=>roundUp(((wallSheathingSF+gableSF)/32)*1.1));
+  const tyvekRolls          = iferror(()=>roundUp((gableSF+wallSheathingSF)/1425));
+  const tyvekTapeRolls      = tyvekRolls*2;
+  const rafterTieStraps     = overheadDoors*2;
+  const bearingPlates       = overheadDoors*2;
+  const roofSheathingOSB    = iferror(()=>roundUp((roofSF/32)*1.1));
+  const plyClipBags         = iferror(()=>roundUp(roofSF/2400));
+  const hurricaneTies       = roundUp(length*1.1);
+  const flashingTapeRolls   = windows>0?1:0;
+  const dupontSealantTubes  = windows>0?1:0;
+  const trussPacks          = roofSheathingOSB>0?1:0;
+
+  const shingleBundles     = includeShingles?roundUp((roofSF/100)*3):0;
+  const feltRolls          = includeShingles?roundUp(shingleBundles/6):0;
+  const hipRidgeBundles    = includeShingles?roundUp((length+2)/33):0;
+  const ridgeCapVentPieces = includeShingles?roundUp((length+2)/20):0;
+  const starterRolls       = includeShingles?roundUp(soffitLF/117):0;
+  const odePieces          = includeShingles?roundUp((soffitLF+rakeLF)/12):0;
+
+  let lapSidingBoards=0,soffitVentBoards=0,rakeBoards=0;
+  let vinylJChannelPcs=0,metalStarterPcs=0,singleUnderSillPcs=0;
+  let rollexStarterPcs=0,mdDividerPcs=0,steelNailsBags=0,vinylLinealPcs=0;
+  let boards1x6=0,boards1x8=0,boards5_4x6=0;
+  let tinShingles=0,zFlashPcs=0,caulkTubes=0,nails10dLbs=0,nails16dLbs=0,roofingNailsLbs=0;
+
+  if (hasSiding) {
+    const { boardLengthLF, sfPerBoard, tinShinglesPerBoard, zFlashLFPerPiece, wasteFactor } = siding;
+    lapSidingBoards  = iferror(()=>roundUp((wallSheathingSF+gableSF)/sfPerBoard));
+    soffitVentBoards = iferror(()=>roundUp((soffitLF/boardLengthLF)*wasteFactor));
+    rakeBoards       = iferror(()=>roundUp((rakeLF/boardLengthLF)*1.2));
+    if (isVinyl) {
+      vinylJChannelPcs   = roundUp((rakeLF+soffitLF+(serviceDoors+windows)*15)/12);
+      metalStarterPcs    = roundUp(((width+length)*2)/12);
+      singleUnderSillPcs = roundUp((windows*5)/12);
+      rollexStarterPcs   = roundUp((rakeLF+soffitLF)/12);
+      mdDividerPcs       = 1;
+      steelNailsBags     = 1;
+      vinylLinealPcs     = wrapWindows?roundUp(((serviceDoors+windows)*15)/20):0;
+    }
+    boards1x6   = roundUp((overheadDoors*32)/boardLengthLF);
+    boards1x8   = iferror(()=>roundUp(((soffitLF+rakeLF)/boardLengthLF)*1.2));
+    boards5_4x6 = isBoardSiding
+      ? roundUp(8+(serviceDoors*17+(wrapWindows?windows*16:0)+overheadDoors*32)/boardLengthLF)
+      : isVinyl?4:0;
+    tinShingles    = tinShinglesPerBoard>0?roundUp(iferror(()=>lapSidingBoards/tinShinglesPerBoard)):0;
+    zFlashPcs      = zFlashLFPerPiece>0?roundUp(iferror(()=>(overheadDoors*16+windows*4+serviceDoors*3)/zFlashLFPerPiece)):0;
+    caulkTubes     = 20;
+    nails10dLbs    = 5;
+    nails16dLbs    = 5;
+    roofingNailsLbs= isBoardSiding?10:isVinyl?20:0;
+  }
+
+  return {
+    sillSealRolls, treatedMudsillEach, studCount, windWashFramingCount, headers2x12, lvlLF,
+    wallSheathingOSB, tyvekRolls, tyvekTapeRolls, rafterTieStraps, bearingPlates,
+    roofSheathingOSB, plyClipBags, windWash2x4Count, windWash2x6Count, hurricaneTies,
+    flashingTapeRolls, dupontSealantTubes, trussPacks,
+    shingleBundles, feltRolls, hipRidgeBundles, ridgeCapVentPieces, starterRolls, odePieces,
+    lapSidingBoards, soffitVentBoards, rakeBoards, vinylJChannelPcs, metalStarterPcs,
+    singleUnderSillPcs, rollexStarterPcs, mdDividerPcs, steelNailsBags, vinylLinealPcs,
+    boards1x6, boards1x8, boards5_4x6, tinShingles, zFlashPcs, caulkTubes,
+    nails10dLbs, nails16dLbs, roofingNailsLbs,
+    vinylWindows: windows, serviceDoors,
+    _geometry: {
+      perimeterLF:     +perimeterLF.toFixed(1),
+      soffitLF:        +soffitLF.toFixed(1),
+      rakeLF:          +rakeLF.toFixed(1),
+      roofSF:          +roofSF.toFixed(0),
+      gableSF:         +gableSF.toFixed(0),
+      wallSheathingSF: +wallSheathingSF.toFixed(0),
+    },
+  };
+}
+
+function validate(inputs) {
+  const e = [];
+  const { width, length, wallHeight, wallThickness, overheadDoors,
+          roofPitch, roofOverhangInches, sidingType, serviceDoors, windows } = inputs;
+  if (!width  || width<1  || width>34)  e.push('Width must be 1–34 ft.');
+  if (!length || length<1 || length>50) e.push('Length must be 1–50 ft.');
+  if (![8,9,10,12,14].includes(wallHeight)) e.push('Invalid wall height.');
+  return e;
+}
+
+function buildRows(inputs, result) {
+  const { wallThickness, wallHeight, roofOverhangInches, sidingType } = inputs;
+  const sc = SIDING_CODES[sidingType] ?? {};
+  const soffitKey = `${roofOverhangInches}" Soffit`;
+
+  const all = [
+    ['Framing','Sill Seal','Each',                     SILL_SEAL_CODES[wallThickness],         result.sillSealRolls],
+    ['Framing',"Treated Mudsill 12'",'Each',           TREATED_CODES[wallThickness][12],        result.treatedMudsillEach],
+    ['Framing',"Treated Mudsill 14'",'Each',           TREATED_CODES[wallThickness][14],        result.treatedMudsillEach],
+    ['Framing',"Treated Mudsill 16'",'Each',           TREATED_CODES[wallThickness][16],        result.treatedMudsillEach],
+    ['Framing','Wall Studs','Each',                    STUD_CODES[wallThickness][wallHeight],   result.studCount],
+    ['Framing',"Wall Wind Wash 12'",'Each',            WIND_WASH_CODES[wallThickness][12],      result.windWashFramingCount],
+    ['Framing',"Wall Wind Wash 14'",'Each',            WIND_WASH_CODES[wallThickness][14],      result.windWashFramingCount],
+    ['Framing',"Wall Wind Wash 16'",'Each',            WIND_WASH_CODES[wallThickness][16],      result.windWashFramingCount],
+    ['Framing','2x12 Header','Each',                   '0212fir12',                             result.headers2x12],
+    ['Framing','LVL','LF',                             '11lvl00',                               result.lvlLF],
+    ['Framing','Wall Sheathing OSB 4x8','Each',        'osb4843',                               result.wallSheathingOSB],
+    ['Framing','Tyvek Housewrap','Each',               tyvekCode(wallHeight),                   result.tyvekRolls],
+    ['Framing','Tyvek Tape','Each',                    'tyvtapehw255',                          result.tyvekTapeRolls],
+    ['Framing','Rafter Tie Strap','Each',              'simlsta24',                             result.rafterTieStraps],
+    ['Framing','Bearing Plate','Each',                 'simbps583hdg',                          result.bearingPlates],
+    ['Framing','Roof Sheathing OSB 4x8','Each',        'osb4850',                               result.roofSheathingOSB],
+    ['Framing','Plywood H-Clips','Each',               'simpscl12',                             result.plyClipBags],
+    ['Framing',"Soffit Wind Wash 2x4 12'",'Each',      '0204ww12',                              result.windWash2x4Count],
+    ['Framing',"Soffit Wind Wash 2x4 14'",'Each',      '0204ww14',                              result.windWash2x4Count],
+    ['Framing',"Soffit Wind Wash 2x4 16'",'Each',      '0204ww16',                              result.windWash2x4Count],
+    ['Framing',"Rake Wind Wash 2x6 12'",'Each',        '0206ww12',                              result.windWash2x6Count],
+    ['Framing',"Rake Wind Wash 2x6 14'",'Each',        '0206ww14',                              result.windWash2x6Count],
+    ['Framing',"Rake Wind Wash 2x6 16'",'Each',        '0206ww16',                              result.windWash2x6Count],
+    ['Framing','Hurricane Ties','Each',                'simh25a',                               result.hurricaneTies],
+    ['Framing','Window Flashing Tape','Each',          'tyvtapedup4x75',                        result.flashingTapeRolls],
+    ['Framing','Dupont Window Sealant','Each',         'caulkdupac10',                          result.dupontSealantTubes],
+    ['Framing','Truss Pack','Each',                    'nsbeisser',                             result.trussPacks],
+
+    ['Shingles','Shingles','Each',                     'shinocdurdw',                           result.shingleBundles],
+    ['Shingles','Felt','Each',                         'felt302sq',                             result.feltRolls],
+    ['Shingles','Hip & Ridge','Each',                  'shinocdurdwa',                          result.hipRidgeBundles],
+    ['Shingles','Ridge Cap Vent','Each',               'ridgevent20',                           result.ridgeCapVentPieces],
+    ['Shingles','Starter Strip','Each',                'shincertstart',                         result.starterRolls],
+    ['Shingles','Drip Edge (ODE)','Each',              'rollexwhtode12',                        result.odePieces],
+
+    ['Siding','8" Lap Siding','Each',                  sc['Lap Siding']??'',                    result.lapSidingBoards],
+    ['Siding',`${roofOverhangInches}" Soffit Vent`,'Each', sc[soffitKey]??'',                  result.soffitVentBoards],
+    ['Siding','12" Rake Board','Each',                 sc['Rake Board']??'',                    result.rakeBoards],
+    ['Siding','Vinyl J-Channel','Each',                sc['J-Channel']??'',                     result.vinylJChannelPcs],
+    ['Siding','Metal Starter Strip','Each',            sc['Metal Starter']??'',                 result.metalStarterPcs],
+    ['Siding','Single Under-Sill','Each',              sc['Single Under']??'',                  result.singleUnderSillPcs],
+    ['Siding','Rollex Starter','Each',                 sc['Rollex Start']??'',                  result.rollexStarterPcs],
+    ['Siding','MD Divider','Each',                     sc['MD Divider']??'',                    result.mdDividerPcs],
+    ['Siding','Steel Nails (Vinyl)','Each',            sc['Steel Nails']??'',                   result.steelNailsBags],
+    ['Siding','Vinyl Lineal (Window Wrap)','Each',     sc['Vinyl Lineal']??'',                  result.vinylLinealPcs],
+    ['Siding','1x6 Fascia / Trim','Each',              sc['1x6']??'',                           result.boards1x6],
+    ['Siding','1x8 Soffit / Rake Trim','Each',         sc['1x8']??'',                           result.boards1x8],
+    ['Siding','5/4x6 Corner / Door Trim','Each',       sc['5/4x6']??'',                         result.boards5_4x6],
+    ['Siding','Tin Step Flashing','Each',              'flashtsb611',                           result.tinShingles],
+    ['Siding','Z-Flashing','Each',                     'flashzgalvz110',                        result.zFlashPcs],
+    ['Siding','Caulk','Each',                          'caulkquad461',                          result.caulkTubes],
+    ['Siding','10d Galvanized Nails','lb',             'nailgalvbox10d',                        result.nails10dLbs],
+    ['Siding','16d Galvanized Nails','lb',             'nailgalvbox16d',                        result.nails16dLbs],
+    ['Siding','Roofing Nails','lb',                    'nailroofeg2',                           result.roofingNailsLbs],
+
+    ['Windows & Doors','Vinyl Window','Each',          'zzgr0000143476',                        result.vinylWindows],
+    ['Windows & Doors','Steel Service Door','Each',    'zzgr0000143477',                        result.serviceDoors],
+  ];
+
+  return all
+    .filter(([,,,,qty]) => qty > 0)
+    .map(([group,description,uom,itemCode,qty]) => ({group,description,uom,itemCode,qty}));
+}
+
+function toCSV(rows, inputs, geo) {
+  const date = new Date().toLocaleDateString('en-US');
+  const esc  = v => /[",\r\n]/.test(v) ? `"${v.replace(/"/g,'""')}"` : v;
+  const lines = [
+    ['Beisser Lumber — Garage Material Takeoff'],
+    [],
+    ['Job Name', inputs.jobName??''], ['Branch', inputs.branch??''],
+    ['Sales Agent', inputs.salesAgent??''], ['Date', date],
+    [],
+    ['Width', `${inputs.width} ft`], ['Length', `${inputs.length} ft`],
+    ['Wall Thickness', inputs.wallThickness], ['Wall Height', `${inputs.wallHeight} ft`],
+    ['Roof Pitch', inputs.roofPitch], ['Overhang', `${inputs.roofOverhangInches}"`],
+    ['Siding', inputs.sidingType], ['Shingles', inputs.includeShingles?'Yes':'No'],
+    [],
+    ['Perimeter', `${geo.perimeterLF} LF`], ['Roof SF', `${geo.roofSF} SF`],
+    ['Wall+Gable SF', `${geo.wallSheathingSF} SF`],
+    [],
+    ['Group','Description','UOM','Item Code','Qty'],
+    ...rows.map(r=>[r.group,r.description,r.uom,r.itemCode,r.qty]),
+  ];
+  return lines.map(row=>row.map(c=>esc(String(c??''))).join(',')).join('\r\n');
+}
+
+// ── DOM WIRING ─────────────────────────────────────────────
+
+let lastInputs = null;
+let lastResult = null;
+let lastRows   = null;
+
+const form       = document.getElementById('estimate-form');
+const errorsDiv  = document.getElementById('errors');
+const emptyCard  = document.getElementById('empty-card');
+const resultsWrap= document.getElementById('results-wrap');
+const tbody      = document.getElementById('takeoff-body');
+const geoBar     = document.getElementById('geo-bar');
+const btnExport  = document.getElementById('btn-export');
+const btnClear   = document.getElementById('btn-clear');
+const wrapRow    = document.getElementById('wrapWindowsRow');
+
+// Show/hide wrap windows based on siding type
+document.getElementById('sidingType').addEventListener('change', e => {
+  wrapRow.style.display = (e.target.value === 'N/A') ? 'none' : 'flex';
+});
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+
+  const inputs = {
+    jobName:           document.getElementById('jobName').value.trim(),
+    branch:            document.getElementById('branch').value,
+    salesAgent:        document.getElementById('salesAgent').value.trim(),
+    wallThickness:     document.getElementById('wallThickness').value,
+    wallHeight:        +document.getElementById('wallHeight').value,
+    width:             +document.getElementById('width').value,
+    length:            +document.getElementById('length').value,
+    overheadDoors:     +document.getElementById('overheadDoors').value,
+    roofPitch:         document.getElementById('roofPitch').value,
+    roofOverhangInches:+document.getElementById('roofOverhangInches').value,
+    includeShingles:    document.getElementById('includeShingles').checked,
+    sidingType:        document.getElementById('sidingType').value,
+    wrapWindows:        document.getElementById('wrapWindows').checked,
+    serviceDoors:      +document.getElementById('serviceDoors').value,
+    windows:           +document.getElementById('windows').value,
+  };
+
+  const errors = validate(inputs);
+  if (errors.length) {
+    errorsDiv.style.display = 'block';
+    errorsDiv.innerHTML = `<p>Please fix the following:</p><ul>${errors.map(e=>`<li>${e}</li>`).join('')}</ul>`;
+    return;
+  }
+  errorsDiv.style.display = 'none';
+
+  const result = calculateGarage(inputs);
+  const rows   = buildRows(inputs, result);
+
+  lastInputs = inputs;
+  lastResult = result;
+  lastRows   = rows;
+
+  // ── Update geometry pills ──
+  const geo = result._geometry;
+  geoBar.innerHTML = [
+    ['Perimeter', `${geo.perimeterLF} LF`],
+    ['Roof SF',   `${geo.roofSF} SF`],
+    ['Wall SF',   `${geo.wallSheathingSF} SF`],
+    ['Soffit',    `${geo.soffitLF} LF`],
+    ['Rake',      `${geo.rakeLF.toFixed(1)} LF`],
+  ].map(([l,v]) => `<div class="geo-pill"><strong>${v}</strong> ${l}</div>`).join('');
+
+  // ── Build table ──
+  let html = '';
+  let currentGroup = null;
+  for (const row of rows) {
+    if (row.group !== currentGroup) {
+      currentGroup = row.group;
+      html += `<tr class="group-row"><td colspan="4">${row.group}</td></tr>`;
+    }
+    html += `
+      <tr>
+        <td class="description">${row.description}</td>
+        <td class="uom">${row.uom}</td>
+        <td class="code">${row.itemCode}</td>
+        <td class="qty">${row.qty}</td>
+      </tr>`;
+  }
+  tbody.innerHTML = html;
+
+  // ── Update header ──
+  const name = inputs.jobName || 'Untitled Job';
+  document.getElementById('results-title').textContent = `${name} — Takeoff`;
+  document.getElementById('results-sub').textContent =
+    `${inputs.width}' × ${inputs.length}' · ${inputs.wallThickness} · ${inputs.roofPitch} · ${inputs.sidingType} · ${rows.length} line items`;
+
+  emptyCard.style.display   = 'none';
+  resultsWrap.style.display = 'block';
+  btnExport.disabled        = false;
+
+  // Scroll results into view on mobile
+  if (window.innerWidth < 860) {
+    resultsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+});
+
+btnExport.addEventListener('click', () => {
+  if (!lastRows) return;
+  const csv      = toCSV(lastRows, lastInputs, lastResult._geometry);
+  const jobSlug  = (lastInputs.jobName||'takeoff').replace(/\s+/g,'_').toLowerCase();
+  const date     = new Date().toISOString().slice(0,10);
+  const filename = `${jobSlug}_${date}.csv`;
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = filename; a.style.display = 'none';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+});
+
+btnClear.addEventListener('click', () => {
+  lastInputs = lastResult = lastRows = null;
+  resultsWrap.style.display = 'none';
+  emptyCard.style.display   = 'block';
+  btnExport.disabled        = true;
+  form.reset();
+  errorsDiv.style.display   = 'none';
+});
+
+</script>
+
+</body>
+</html>
