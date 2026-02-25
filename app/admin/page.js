@@ -111,16 +111,62 @@ function BarChart({ data, labelKey, valueKey }) {
 function MetricsTab() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [initializing, setInitializing] = useState(false);
+  const [initMsg, setInitMsg] = useState('');
 
-  useEffect(() => {
+  const loadMetrics = () => {
+    setLoading(true);
     fetch('/api/admin/metrics')
       .then(r => r.json())
       .then(d => { setData(d); setLoading(false); })
       .catch(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { loadMetrics(); }, []);
+
+  const initDb = async () => {
+    setInitializing(true);
+    setInitMsg('');
+    try {
+      const res = await fetch('/api/admin/init-db', { method: 'POST' });
+      const json = await res.json();
+      if (res.ok) {
+        setInitMsg('Database initialized successfully. Reloading…');
+        setTimeout(() => loadMetrics(), 1000);
+      } else {
+        setInitMsg(`Error: ${json.error}`);
+      }
+    } catch {
+      setInitMsg('Network error — please try again.');
+    }
+    setInitializing(false);
+  };
 
   if (loading) return <p style={{color:'var(--gray-5)'}}>Loading metrics…</p>;
   if (!data)   return <p style={{color:'var(--gray-5)'}}>Failed to load metrics.</p>;
+
+  if (data.tablesReady === false) {
+    return (
+      <div style={{padding:'32px 0',maxWidth:520}}>
+        <div style={{background:'#fff8e1',border:'1px solid #ffe082',borderRadius:6,padding:'20px 24px',marginBottom:16}}>
+          <strong style={{display:'block',marginBottom:8}}>Database tables not yet created</strong>
+          <p style={{fontSize:13,color:'var(--gray-7)',margin:'0 0 16px'}}>
+            The <code>quotes</code> and <code>truss_prices</code> tables are missing from the database.
+            Click the button below to create them now.
+          </p>
+          <button
+            className="btn btn-primary"
+            style={{width:'auto',height:36,fontSize:13}}
+            onClick={initDb}
+            disabled={initializing}
+          >
+            {initializing ? 'Initializing…' : 'Initialize Database Tables'}
+          </button>
+          {initMsg && <p style={{fontSize:13,marginTop:10,color:'var(--gray-7)'}}>{initMsg}</p>}
+        </div>
+      </div>
+    );
+  }
 
   const sizeLabels = data.topSizes.map(s => `${s.width}×${s.length}`);
   const sizeData   = data.topSizes.map(s => ({ label: `${s.width}×${s.length}`, count: s.count }));
