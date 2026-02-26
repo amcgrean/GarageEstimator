@@ -1,8 +1,10 @@
 /* ── TOKENS ── */
 :root {
-  --red:       #C8181E;
-  --red-dk:    #9E1015;
-  --red-lt:    #f5e6e7;
+  --red:       #006834;
+  --red-dk:    #00572b;
+  --red-lt:    #e8f2ed;
+  --gold:      #9E8635;
+  --gold-lt:   #f5f0e0;
   --gray-0:    #ffffff;
   --gray-1:    #f7f7f7;
   --gray-2:    #ebebeb;
@@ -45,24 +47,35 @@ body {
   box-shadow: 0 2px 6px rgba(0,0,0,.25);
 }
 .site-header .logo {
-  font-family: var(--font-head);
-  font-size: 18px;
-  font-weight: 400;
-  letter-spacing: .02em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   flex: 1;
   text-decoration: none;
   color: #fff;
 }
-.site-header .logo strong { font-weight: 700; }
+.header-logo-image {
+  height: 30px;
+  width: auto;
+  display: block;
+}
+.logo-subtitle {
+  font-family: var(--font-head);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  color: rgba(255,255,255,.95);
+}
 .site-header .badge {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: .08em;
   text-transform: uppercase;
-  background: rgba(255,255,255,.18);
+  background: rgba(158,134,53,.25);
   padding: 3px 9px;
   border-radius: 20px;
-  border: 1px solid rgba(255,255,255,.3);
+  border: 1px solid rgba(158,134,53,.55);
+  color: #f8f4e8;
 }
 .site-header nav a {
   color: rgba(255,255,255,.85);
@@ -280,7 +293,7 @@ thead th {
 }
 thead th.right { text-align: right; }
 tbody tr:nth-child(even) { background: var(--gray-1); }
-tbody tr:hover { background: #fef6f6; }
+tbody tr:hover { background: var(--gold-lt); }
 .group-row td {
   background: var(--red);
   color: #fff;
