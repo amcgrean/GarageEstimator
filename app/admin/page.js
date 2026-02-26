@@ -116,10 +116,10 @@ function MetricsTab() {
 
   const loadMetrics = () => {
     setLoading(true);
-    fetch('/api/admin/metrics')
+    fetch('/api/admin/metrics', { cache: 'no-store' })
       .then(r => r.json())
       .then(d => { setData(d); setLoading(false); })
-      .catch(() => setLoading(false));
+      .catch(() => { setData(null); setLoading(false); });
   };
 
   useEffect(() => { loadMetrics(); }, []);
