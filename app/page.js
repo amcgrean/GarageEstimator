@@ -3,6 +3,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 
+const BRAND_COLORS = {
+  green: '#006834',
+  gold: '#9E8635',
+  roof: '#4A4D45',
+  roofDark: '#2E312C',
+};
+
 // ── Inline calc engine (client-side, no bundler issues) ─────────────────────
 
 const ROOF_PITCH_DATA = {
@@ -191,19 +198,9 @@ function buildRows(inputs,result){
   return all.filter(([,,,,q])=>q>0).map(([g,d,u,c,q])=>({group:g,description:d,uom:u,itemCode:c,qty:q}));
 }
 
-function toCSV(rows,inputs,geo){
-  const date=new Date().toLocaleDateString('en-US');
+function toCSV(rows){
   const esc=v=>/[",\r\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:`${v}`;
   const lines=[
-    ['Beisser Lumber \u2014 Garage Material Takeoff'],[],
-    ['Job Name',inputs.jobName??''],['Branch',inputs.branch??''],
-    ['Sales Agent',inputs.salesAgent??''],['Date',date],[],
-    ['Width',`${inputs.width} ft`],['Length',`${inputs.length} ft`],
-    ['Wall Thickness',inputs.wallThickness],['Wall Height',`${inputs.wallHeight} ft`],
-    ['Roof Pitch',inputs.roofPitch],['Overhang',`${inputs.roofOverhangInches}"`],
-    ['Siding',inputs.sidingType],['Shingles',inputs.includeShingles?'Yes':'No'],[],
-    ['Perimeter',`${geo.perimeterLF} LF`],['Roof SF',`${geo.roofSF} SF`],
-    ['Wall+Gable SF',`${geo.wallSheathingSF} SF`],[],
     ['Group','Description','UOM','Item Code','Qty'],
     ...rows.map(r=>[r.group,r.description,r.uom,r.itemCode,r.qty]),
   ];
@@ -321,8 +318,8 @@ function GarageSketch({ inputs }) {
       />
       {/* Roof right side */}
       <polygon
-        points={`${wallR},${wallTop-riseH} ${wallR+sDepth},${wallTop-riseH-sDY} ${wallR+sDepth+ohPx},${wallTop-riseH-sDY+ohPx*0.1} ${wallR+ohPx},${wallTop-riseH+ohPx*0.1}`}
-        fill="#6b7280" stroke="#444" strokeWidth="1"
+        points={`${peakX},${wallTop-riseH-ohPx*slope} ${roofPeakX},${roofPeakY} ${wallR+sDepth+ohPx},${wallTop-riseH-sDY+ohPx*0.1} ${wallR+ohPx},${wallTop-riseH+ohPx*0.1}`}
+        fill={BRAND_COLORS.roof} stroke={BRAND_COLORS.roofDark} strokeWidth="1.2"
       />
       {/* Soffit / eave right */}
       <line x1={wallR} y1={wallTop} x2={wallR+ohPx} y2={wallTop-ohPx*0.1} stroke="#555" strokeWidth="1.5" />
@@ -376,22 +373,23 @@ function GarageSketch({ inputs }) {
       {/* Roof gable triangle */}
       <polygon
         points={`${wallL-ohPx},${wallTop} ${peakX},${wallTop-riseH-ohPx*slope} ${wallR+ohPx},${wallTop}`}
-        fill="#555" stroke="#333" strokeWidth="1.5"
+        fill={BRAND_COLORS.roofDark} stroke={BRAND_COLORS.roofDark} strokeWidth="1.5"
       />
       {/* Rake overhangs */}
       <line x1={wallL-ohPx} y1={wallTop} x2={peakX} y2={wallTop-riseH-ohPx*slope} stroke="#444" strokeWidth="2" />
       <line x1={wallR+ohPx} y1={wallTop} x2={peakX} y2={wallTop-riseH-ohPx*slope} stroke="#444" strokeWidth="2" />
+      <line x1={peakX} y1={wallTop-riseH-ohPx*slope} x2={roofPeakX} y2={roofPeakY} stroke={BRAND_COLORS.roofDark} strokeWidth="1.2" />
       {/* Eave soffit */}
       <line x1={wallL-ohPx} y1={wallTop} x2={wallR+ohPx} y2={wallTop} stroke="#666" strokeWidth="2.5" />
 
       {/* ── DIMENSION LABELS ── */}
       <g fill="#374151" fontSize="11" fontFamily="Georgia,serif">
         {/* Width */}
-        <line x1={wallL} y1={wallBot+14} x2={wallR} y2={wallBot+14} stroke="#C8181E" strokeWidth="1" markerEnd="url(#arr)" />
-        <text x={peakX} y={wallBot+24} textAnchor="middle" fontWeight="bold" fill="#C8181E" fontSize="12">{W}&apos;</text>
+        <line x1={wallL} y1={wallBot+14} x2={wallR} y2={wallBot+14} stroke={BRAND_COLORS.gold} strokeWidth="1" markerEnd="url(#arr)" />
+        <text x={peakX} y={wallBot+24} textAnchor="middle" fontWeight="bold" fill={BRAND_COLORS.gold} fontSize="12">{W}&apos;</text>
         {/* Height */}
-        <line x1={wallL-16} y1={wallTop} x2={wallL-16} y2={wallBot} stroke="#C8181E" strokeWidth="1" />
-        <text x={wallL-20} y={(wallTop+wallBot)/2} textAnchor="end" fill="#C8181E" fontSize="11">{H}&apos;</text>
+        <line x1={wallL-16} y1={wallTop} x2={wallL-16} y2={wallBot} stroke={BRAND_COLORS.gold} strokeWidth="1" />
+        <text x={wallL-20} y={(wallTop+wallBot)/2} textAnchor="end" fill={BRAND_COLORS.gold} fontSize="11">{H}&apos;</text>
         {/* Pitch label */}
         <text x={peakX} y={wallTop-riseH-ohPx*slope-10} textAnchor="middle" fill="#6b7280" fontSize="10">{pitch}</text>
         {/* Length hint */}
@@ -528,7 +526,7 @@ export default function CalculatorPage() {
       setSaveMsg(`Quote #${data.quoteId} saved.`);
 
       // Trigger CSV download
-      const csv = toCSV(rows, calcInputs, result._geometry);
+      const csv = toCSV(rows);
       const slug = (calcInputs.jobName || 'takeoff').replace(/\s+/g, '_').toLowerCase();
       const date = new Date().toISOString().slice(0, 10);
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -556,7 +554,10 @@ export default function CalculatorPage() {
   return (
     <>
       <header className="site-header">
-        <a href="/" className="logo"><strong>Beisser</strong> Lumber — Garage Estimator</a>
+        <a href="/" className="logo" aria-label="Beisser Lumber Garage Estimator">
+          <img src="/beisser-logo.svg" alt="Beisser Lumber Company" className="header-logo-image" />
+          <span className="logo-subtitle">Garage Estimator</span>
+        </a>
         <div className="badge">Gabled Garages Only</div>
         <nav style={{ marginLeft: 'auto' }}>
           <Link href="/admin">Admin</Link>
@@ -780,9 +781,6 @@ export default function CalculatorPage() {
               <div className="card">
                 <div className="card-head">
                   <h2>{inputs.jobName || 'Takeoff'} &mdash; {rows.length} line items</h2>
-                  <span style={{fontSize:12,color:'var(--gray-5)'}}>
-                    {inputs.width}&apos; × {inputs.length}&apos; · {inputs.wallThickness} · {inputs.roofPitch} · {inputs.sidingType}
-                  </span>
                 </div>
                 <div className="table-wrap">
                   <table>

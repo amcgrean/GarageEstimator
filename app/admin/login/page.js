@@ -36,7 +36,10 @@ export default function AdminLoginPage() {
   return (
     <>
       <header className="site-header">
-        <a href="/" className="logo"><strong>Beisser</strong> Lumber — Garage Estimator</a>
+        <a href="/" className="logo" aria-label="Beisser Lumber Garage Estimator">
+          <img src="/beisser-logo.svg" alt="Beisser Lumber Company" className="header-logo-image" />
+          <span className="logo-subtitle">Garage Estimator</span>
+        </a>
       </header>
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 56px)', padding: 20 }}>

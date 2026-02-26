@@ -779,7 +779,10 @@ export default function AdminPage() {
   return (
     <>
       <header className="site-header">
-        <a href="/" className="logo"><strong>Beisser</strong> Lumber — Garage Estimator</a>
+        <a href="/" className="logo" aria-label="Beisser Lumber Garage Estimator">
+          <img src="/beisser-logo.svg" alt="Beisser Lumber Company" className="header-logo-image" />
+          <span className="logo-subtitle">Garage Estimator</span>
+        </a>
         <nav style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           <Link href="/" style={{color:'rgba(255,255,255,.85)',fontSize:13,textDecoration:'none'}}>← Calculator</Link>
           <button
