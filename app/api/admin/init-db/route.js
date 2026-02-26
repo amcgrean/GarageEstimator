@@ -4,6 +4,18 @@ import { sql } from '@/lib/db';
 export async function POST() {
   try {
     await sql`
+      CREATE TABLE IF NOT EXISTS agents (
+        id         SERIAL PRIMARY KEY,
+        name       VARCHAR(100) NOT NULL,
+        username   VARCHAR(50)  NOT NULL UNIQUE,
+        branch     VARCHAR(50)  NOT NULL,
+        pin        CHAR(60)     NOT NULL,
+        active     BOOLEAN      NOT NULL DEFAULT true,
+        created_at TIMESTAMP    NOT NULL DEFAULT NOW()
+      )
+    `;
+
+    await sql`
       CREATE TABLE IF NOT EXISTS quotes (
         id               SERIAL PRIMARY KEY,
         job_name         VARCHAR(20),
